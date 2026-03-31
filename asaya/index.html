@@ -70,10 +70,10 @@ body{min-height:100%;background:var(--bg);font-family:var(--font-b);color:var(--
 .s1-title em{font-style:italic;color:var(--accent)}
 .s1-sub{font-size:14px;color:var(--text-mid);margin:12px auto 0;position:relative;z-index:1;max-width:320px;line-height:1.5}
 
-/* Time badge — looks like a highlighted pill button */
-.s1-time{display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:var(--primary-dark);border-radius:var(--rp);padding:12px 24px;font-size:15px;font-weight:700;margin:20px auto 0;position:relative;z-index:1;letter-spacing:.02em;box-shadow:0 4px 16px rgba(201,169,110,.35);border:2px solid var(--accent-light)}
-.s1-time-dot{width:10px;height:10px;border-radius:50%;background:var(--green);animation:pulse 1.5s ease infinite;box-shadow:0 0 6px var(--green)}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+/* Time badge — light subtle chip */
+.s1-time{display:inline-flex;align-items:center;gap:6px;background:var(--white);color:var(--primary);border-radius:var(--rp);padding:8px 18px;font-size:13px;font-weight:600;margin:18px auto 0;position:relative;z-index:1;letter-spacing:.02em;border:1px solid var(--secondary-dark)}
+.s1-time-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 1.5s ease infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
 /* CTA area */
 .s1-cta{padding:20px 24px 0;position:relative;z-index:1}
