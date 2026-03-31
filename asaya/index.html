@@ -63,36 +63,42 @@ body{min-height:100%;background:var(--bg);font-family:var(--font-b);color:var(--
 .s1-nav{display:flex;justify-content:space-between;align-items:center;padding:20px 24px}
 .s1-logo{font-family:var(--font-d);font-size:24px;font-weight:700;color:var(--primary);letter-spacing:.02em}
 .s1-nav-links{display:flex;gap:16px;font-size:12px;font-weight:600;color:var(--primary-light);text-transform:uppercase;letter-spacing:.08em}
-.s1-hero{padding:48px 28px 40px;text-align:center;position:relative;overflow:hidden}
+.s1-hero{padding:32px 28px 0;text-align:center;position:relative;overflow:hidden}
 .s1-hero::before{content:'';position:absolute;top:-60px;right:-40px;width:200px;height:200px;background:radial-gradient(circle,rgba(201,169,110,.15),transparent 70%);border-radius:50%}
-.s1-hero::after{content:'';position:absolute;bottom:40px;left:-30px;width:120px;height:120px;background:radial-gradient(circle,rgba(98,59,42,.08),transparent 70%);border-radius:50%}
-.s1-eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.15em;color:var(--accent);font-weight:600;margin-bottom:12px;position:relative;z-index:1}
-.s1-title{font-family:var(--font-d);font-size:38px;line-height:1.15;color:var(--primary);position:relative;z-index:1}
+.s1-eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.15em;color:var(--accent);font-weight:600;margin-bottom:10px;position:relative;z-index:1}
+.s1-title{font-family:var(--font-d);font-size:34px;line-height:1.15;color:var(--primary);position:relative;z-index:1}
 .s1-title em{font-style:italic;color:var(--accent)}
-.s1-sub{font-size:15px;color:var(--text-mid);margin:16px 0 32px;position:relative;z-index:1;max-width:320px;margin-left:auto;margin-right:auto}
-.s1-detect{margin:0 auto 28px;max-width:300px;position:relative;z-index:1}
-.s1-detect-title{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--text-light);font-weight:600;margin-bottom:10px}
+.s1-sub{font-size:14px;color:var(--text-mid);margin:12px auto 0;position:relative;z-index:1;max-width:320px;line-height:1.5}
+
+/* Time badge — looks like a highlighted pill button */
+.s1-time{display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:var(--primary-dark);border-radius:var(--rp);padding:12px 24px;font-size:15px;font-weight:700;margin:20px auto 0;position:relative;z-index:1;letter-spacing:.02em;box-shadow:0 4px 16px rgba(201,169,110,.35);border:2px solid var(--accent-light)}
+.s1-time-dot{width:10px;height:10px;border-radius:50%;background:var(--green);animation:pulse 1.5s ease infinite;box-shadow:0 0 6px var(--green)}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+
+/* CTA area */
+.s1-cta{padding:20px 24px 0;position:relative;z-index:1}
+.s1-cta-sub{text-align:center;font-size:11px;color:var(--text-light);margin-top:8px}
+
+/* What we detect */
+.s1-detect{padding:20px 24px 0;position:relative;z-index:1}
+.s1-detect-label{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--text-light);font-weight:600;text-align:center;margin-bottom:10px}
 .s1-detect-tags{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
 .s1-detect-tag{padding:6px 14px;background:var(--white);border-radius:var(--rp);font-size:12px;font-weight:500;color:var(--primary);border:1px solid var(--secondary-dark)}
-.s1-strip{background:var(--primary);color:var(--secondary);font-size:11px;font-weight:500;letter-spacing:.08em;padding:10px 0;overflow:hidden;white-space:nowrap;margin-top:32px}
-.s1-strip span{display:inline-block;animation:marquee 20s linear infinite}
-@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
 /* How it works */
-.s1-how{padding:0 24px 20px;position:relative;z-index:1}
+.s1-how{padding:20px 24px 0;position:relative;z-index:1}
 .s1-how-title{font-family:var(--font-d);font-size:18px;color:var(--primary);text-align:center;margin-bottom:14px}
-.s1-steps{display:flex;flex-direction:column;gap:10px}
-.s1-step{display:flex;align-items:flex-start;gap:12px;background:var(--white);border-radius:var(--rs);padding:14px 16px;border:1px solid var(--secondary-dark)}
-.s1-step-num{width:28px;height:28px;border-radius:50%;background:var(--primary);color:var(--white);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:1px}
-.s1-step-info{flex:1}
-.s1-step-name{font-weight:700;font-size:13px;color:var(--primary);margin-bottom:2px}
-.s1-step-desc{font-size:11px;color:var(--text-mid);line-height:1.4}
+.s1-steps{display:flex;flex-direction:column;gap:8px}
+.s1-step{display:flex;align-items:center;gap:12px;background:var(--white);border-radius:var(--rs);padding:12px 16px;border:1px solid var(--secondary-dark)}
+.s1-step-icon{font-size:20px;flex-shrink:0}
+.s1-step-text{flex:1;font-size:13px;font-weight:600;color:var(--primary)}
+.s1-step-text span{font-weight:400;color:var(--text-mid);font-size:11px;display:block;margin-top:1px}
 
-/* Trust badges */
-.s1-trust{display:flex;justify-content:center;gap:20px;padding:16px 24px 8px;position:relative;z-index:1}
-.s1-trust-item{text-align:center}
-.s1-trust-icon{font-size:18px;margin-bottom:2px}
-.s1-trust-label{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-light);font-weight:600;line-height:1.3}
+/* Trust strip */
+.s1-trust{display:flex;justify-content:space-around;padding:20px 16px 24px;position:relative;z-index:1}
+.s1-trust-item{text-align:center;flex:1}
+.s1-trust-val{font-family:var(--font-d);font-size:20px;color:var(--primary);font-weight:700}
+.s1-trust-label{font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-light);font-weight:600;margin-top:2px}
 
 /* ===== SCREEN 2: PLACEHOLDER (SDK handles camera + analyzing) ===== */
 .s2-sdk{background:#111;min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 24px;color:var(--secondary)}
@@ -293,66 +299,60 @@ body{min-height:100%;background:var(--bg);font-family:var(--font-b);color:var(--
           <div class="s1-logo">Asaya</div>
           <div class="s1-nav-links"><span>Shop</span><span>About</span></div>
         </div>
-        <div class="s1-strip"><span>CLINICALLY FORMULATED FOR MELANIN-RICH SKIN &nbsp;&bull;&nbsp; AI-POWERED SKIN ANALYSIS &nbsp;&bull;&nbsp; PERSONALIZED ROUTINES &nbsp;&bull;&nbsp; CLINICALLY FORMULATED FOR MELANIN-RICH SKIN &nbsp;&bull;&nbsp; AI-POWERED SKIN ANALYSIS &nbsp;&bull;&nbsp; PERSONALIZED ROUTINES &nbsp;&bull;&nbsp;</span></div>
+
         <div class="s1-hero">
-          <div class="s1-eyebrow">AI Pigmentation Analyzer</div>
-          <div class="s1-title">Understand Your <em>Skin</em><br>Like Never Before</div>
-          <div class="s1-sub">Get a detailed AI analysis of your pigmentation, melasma type, and a personalized routine built for melanin-rich skin.</div>
-          <div class="s1-detect">
-            <div class="s1-detect-tags">
-              <div class="s1-detect-tag">Melasma</div>
-              <div class="s1-detect-tag">Hyperpigmentation</div>
-              <div class="s1-detect-tag">Uneven Tone</div>
-              <div class="s1-detect-tag">Post Acne Marks</div>
-              <div class="s1-detect-tag">Pores</div>
-            </div>
+          <div class="s1-eyebrow">Free AI Skin Analysis</div>
+          <div class="s1-title">Know What Your <em>Skin</em> Really Needs</div>
+          <div class="s1-sub">Take a quick selfie and get a personalized pigmentation report with a skincare routine made just for you.</div>
+          <div class="s1-time"><div class="s1-time-dot"></div> Takes just 60 seconds</div>
+        </div>
+
+        <!-- CTA above how it works -->
+        <div class="s1-cta">
+          <div class="btn" onclick="goTo('s2')">Start My Skin Analysis</div>
+          <div class="s1-cta-sub">No sign-up &bull; No downloads &bull; 100% private</div>
+        </div>
+
+        <!-- What we detect -->
+        <div class="s1-detect">
+          <div class="s1-detect-label">What We Analyze</div>
+          <div class="s1-detect-tags">
+            <div class="s1-detect-tag">Melasma</div>
+            <div class="s1-detect-tag">Hyperpigmentation</div>
+            <div class="s1-detect-tag">Uneven Tone</div>
+            <div class="s1-detect-tag">Post Acne Marks</div>
+            <div class="s1-detect-tag">Pores</div>
           </div>
         </div>
 
+        <!-- How it works -->
         <div class="s1-how">
           <div class="s1-how-title">How It Works</div>
           <div class="s1-steps">
             <div class="s1-step">
-              <div class="s1-step-num">1</div>
-              <div class="s1-step-info">
-                <div class="s1-step-name">Scan Your Face</div>
-                <div class="s1-step-desc">Our AI captures and analyzes 14+ skin parameters in seconds using just your camera.</div>
-              </div>
+              <div class="s1-step-icon">&#x1F4F7;</div>
+              <div class="s1-step-text">Take a selfie <span>Our AI scans 14+ skin parameters instantly</span></div>
             </div>
             <div class="s1-step">
-              <div class="s1-step-num">2</div>
-              <div class="s1-step-info">
-                <div class="s1-step-name">Get Your Report</div>
-                <div class="s1-step-desc">See a detailed breakdown of concerns including melasma classification (epidermal, dermal, or mixed).</div>
-              </div>
+              <div class="s1-step-icon">&#x1F4CA;</div>
+              <div class="s1-step-text">See your results <span>Detailed report with melasma type &amp; severity</span></div>
             </div>
             <div class="s1-step">
-              <div class="s1-step-num">3</div>
-              <div class="s1-step-info">
-                <div class="s1-step-name">Answer a Few Questions</div>
-                <div class="s1-step-desc">A quick medical questionnaire helps us identify your triggers and sensitivity level.</div>
-              </div>
+              <div class="s1-step-icon">&#x1F4DD;</div>
+              <div class="s1-step-text">Answer a few questions <span>We identify your triggers &amp; skin sensitivity</span></div>
             </div>
             <div class="s1-step">
-              <div class="s1-step-num">4</div>
-              <div class="s1-step-info">
-                <div class="s1-step-name">Your Personalized Routine</div>
-                <div class="s1-step-desc">Receive a custom AM/PM skincare routine with Asaya products matched to your skin.</div>
-              </div>
+              <div class="s1-step-icon">&#x2728;</div>
+              <div class="s1-step-text">Get your routine <span>Personalized AM/PM products for your skin</span></div>
             </div>
           </div>
         </div>
 
+        <!-- Trust numbers -->
         <div class="s1-trust">
-          <div class="s1-trust-item"><div class="s1-trust-icon">&#x1F9EC;</div><div class="s1-trust-label">AI<br>Powered</div></div>
-          <div class="s1-trust-item"><div class="s1-trust-icon">&#x1F50D;</div><div class="s1-trust-label">14+<br>Parameters</div></div>
-          <div class="s1-trust-item"><div class="s1-trust-icon">&#x1F9D1;&#x200D;&#x2695;&#xFE0F;</div><div class="s1-trust-label">Derm<br>Backed</div></div>
-          <div class="s1-trust-item"><div class="s1-trust-icon">&#x1F512;</div><div class="s1-trust-label">100%<br>Private</div></div>
-        </div>
-
-        <div style="padding:16px 24px 28px">
-          <div class="btn" onclick="goTo('s2')">Analyze My Skin</div>
-          <div style="text-align:center;font-size:11px;color:var(--text-light);margin-top:8px">Free &bull; No sign-up required &bull; Takes 60 seconds</div>
+          <div class="s1-trust-item"><div class="s1-trust-val">14+</div><div class="s1-trust-label">Parameters<br>Analyzed</div></div>
+          <div class="s1-trust-item"><div class="s1-trust-val">60s</div><div class="s1-trust-label">Quick<br>Analysis</div></div>
+          <div class="s1-trust-item"><div class="s1-trust-val">100%</div><div class="s1-trust-label">Private<br>&amp; Secure</div></div>
         </div>
       </div>
     </div>
