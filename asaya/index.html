@@ -74,11 +74,25 @@ body{min-height:100%;background:var(--bg);font-family:var(--font-b);color:var(--
 .s1-detect-title{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--text-light);font-weight:600;margin-bottom:10px}
 .s1-detect-tags{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
 .s1-detect-tag{padding:6px 14px;background:var(--white);border-radius:var(--rp);font-size:12px;font-weight:500;color:var(--primary);border:1px solid var(--secondary-dark)}
-.s1-face{width:130px;height:160px;margin:28px auto 0;background:linear-gradient(145deg,var(--primary-light),var(--primary));border-radius:65px 65px 52px 52px;display:flex;align-items:center;justify-content:center;position:relative;z-index:1;box-shadow:0 8px 32px rgba(98,59,42,.2)}
-.s1-face svg{opacity:.6}
 .s1-strip{background:var(--primary);color:var(--secondary);font-size:11px;font-weight:500;letter-spacing:.08em;padding:10px 0;overflow:hidden;white-space:nowrap;margin-top:32px}
 .s1-strip span{display:inline-block;animation:marquee 20s linear infinite}
 @keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* How it works */
+.s1-how{padding:0 24px 20px;position:relative;z-index:1}
+.s1-how-title{font-family:var(--font-d);font-size:18px;color:var(--primary);text-align:center;margin-bottom:14px}
+.s1-steps{display:flex;flex-direction:column;gap:10px}
+.s1-step{display:flex;align-items:flex-start;gap:12px;background:var(--white);border-radius:var(--rs);padding:14px 16px;border:1px solid var(--secondary-dark)}
+.s1-step-num{width:28px;height:28px;border-radius:50%;background:var(--primary);color:var(--white);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:1px}
+.s1-step-info{flex:1}
+.s1-step-name{font-weight:700;font-size:13px;color:var(--primary);margin-bottom:2px}
+.s1-step-desc{font-size:11px;color:var(--text-mid);line-height:1.4}
+
+/* Trust badges */
+.s1-trust{display:flex;justify-content:center;gap:20px;padding:16px 24px 8px;position:relative;z-index:1}
+.s1-trust-item{text-align:center}
+.s1-trust-icon{font-size:18px;margin-bottom:2px}
+.s1-trust-label{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-light);font-weight:600;line-height:1.3}
 
 /* ===== SCREEN 2: PLACEHOLDER (SDK handles camera + analyzing) ===== */
 .s2-sdk{background:#111;min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 24px;color:var(--secondary)}
@@ -282,18 +296,63 @@ body{min-height:100%;background:var(--bg);font-family:var(--font-b);color:var(--
         <div class="s1-strip"><span>CLINICALLY FORMULATED FOR MELANIN-RICH SKIN &nbsp;&bull;&nbsp; AI-POWERED SKIN ANALYSIS &nbsp;&bull;&nbsp; PERSONALIZED ROUTINES &nbsp;&bull;&nbsp; CLINICALLY FORMULATED FOR MELANIN-RICH SKIN &nbsp;&bull;&nbsp; AI-POWERED SKIN ANALYSIS &nbsp;&bull;&nbsp; PERSONALIZED ROUTINES &nbsp;&bull;&nbsp;</span></div>
         <div class="s1-hero">
           <div class="s1-eyebrow">AI Pigmentation Analyzer</div>
-          <div class="s1-title">Scan Your <em>Skin</em><br>to Detect</div>
+          <div class="s1-title">Understand Your <em>Skin</em><br>Like Never Before</div>
+          <div class="s1-sub">Get a detailed AI analysis of your pigmentation, melasma type, and a personalized routine built for melanin-rich skin.</div>
           <div class="s1-detect">
             <div class="s1-detect-tags">
               <div class="s1-detect-tag">Melasma</div>
               <div class="s1-detect-tag">Hyperpigmentation</div>
               <div class="s1-detect-tag">Uneven Tone</div>
+              <div class="s1-detect-tag">Post Acne Marks</div>
+              <div class="s1-detect-tag">Pores</div>
             </div>
           </div>
-          <div class="btn" onclick="goTo('s2')" style="width:auto;display:inline-block;padding:16px 40px">Analyze My Skin</div>
-          <div class="s1-face">
-            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#F2EAE2" stroke-width="1.2"><circle cx="12" cy="8" r="5"/><path d="M3 21c0-4.97 4.03-9 9-9s9 4.03 9 9"/></svg>
+        </div>
+
+        <div class="s1-how">
+          <div class="s1-how-title">How It Works</div>
+          <div class="s1-steps">
+            <div class="s1-step">
+              <div class="s1-step-num">1</div>
+              <div class="s1-step-info">
+                <div class="s1-step-name">Scan Your Face</div>
+                <div class="s1-step-desc">Our AI captures and analyzes 14+ skin parameters in seconds using just your camera.</div>
+              </div>
+            </div>
+            <div class="s1-step">
+              <div class="s1-step-num">2</div>
+              <div class="s1-step-info">
+                <div class="s1-step-name">Get Your Report</div>
+                <div class="s1-step-desc">See a detailed breakdown of concerns including melasma classification (epidermal, dermal, or mixed).</div>
+              </div>
+            </div>
+            <div class="s1-step">
+              <div class="s1-step-num">3</div>
+              <div class="s1-step-info">
+                <div class="s1-step-name">Answer a Few Questions</div>
+                <div class="s1-step-desc">A quick medical questionnaire helps us identify your triggers and sensitivity level.</div>
+              </div>
+            </div>
+            <div class="s1-step">
+              <div class="s1-step-num">4</div>
+              <div class="s1-step-info">
+                <div class="s1-step-name">Your Personalized Routine</div>
+                <div class="s1-step-desc">Receive a custom AM/PM skincare routine with Asaya products matched to your skin.</div>
+              </div>
+            </div>
           </div>
+        </div>
+
+        <div class="s1-trust">
+          <div class="s1-trust-item"><div class="s1-trust-icon">&#x1F9EC;</div><div class="s1-trust-label">AI<br>Powered</div></div>
+          <div class="s1-trust-item"><div class="s1-trust-icon">&#x1F50D;</div><div class="s1-trust-label">14+<br>Parameters</div></div>
+          <div class="s1-trust-item"><div class="s1-trust-icon">&#x1F9D1;&#x200D;&#x2695;&#xFE0F;</div><div class="s1-trust-label">Derm<br>Backed</div></div>
+          <div class="s1-trust-item"><div class="s1-trust-icon">&#x1F512;</div><div class="s1-trust-label">100%<br>Private</div></div>
+        </div>
+
+        <div style="padding:16px 24px 28px">
+          <div class="btn" onclick="goTo('s2')">Analyze My Skin</div>
+          <div style="text-align:center;font-size:11px;color:var(--text-light);margin-top:8px">Free &bull; No sign-up required &bull; Takes 60 seconds</div>
         </div>
       </div>
     </div>
