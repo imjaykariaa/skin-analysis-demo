@@ -37,7 +37,7 @@ html{height:100%;-webkit-text-size-adjust:100%}
 body{min-height:100%;background:var(--bg);font-family:var(--font-b);color:var(--text);line-height:1.5;-webkit-font-smoothing:antialiased}
 
 /* Container */
-.app{max-width:480px;margin:0 auto;position:relative;overflow:hidden;min-height:100vh;background:var(--white)}
+.app{width:100%;max-width:480px;margin:0 auto;position:relative;overflow:hidden;min-height:100vh;background:var(--white)}
 @media(min-width:768px){
   body{background:#E8E0D8;display:flex;align-items:center;justify-content:center;padding:24px 0}
   .app{min-height:90vh;max-height:900px;border-radius:32px;box-shadow:0 20px 80px rgba(98,59,42,.15)}
@@ -110,6 +110,7 @@ body{min-height:100%;background:var(--bg);font-family:var(--font-b);color:var(--
 .s3-summary{font-size:13px;color:var(--text-mid);line-height:1.6;margin-top:8px}
 .s3-summary strong{color:var(--primary)}
 
+
 /* Section titles */
 .stitle{font-family:var(--font-d);font-size:18px;color:var(--primary);padding:0 16px;margin:20px 0 12px}
 
@@ -156,6 +157,7 @@ body{min-height:100%;background:var(--bg);font-family:var(--font-b);color:var(--
 .cc-score{font-size:11px;font-weight:600;color:var(--text-light)}
 .cc-insight{font-size:12px;color:var(--text-mid);line-height:1.6;margin-top:6px}
 
+
 /* ===== MELASMA DEEP DIVE ===== */
 .melasma{margin:0 16px 16px;background:linear-gradient(145deg,var(--primary),var(--primary-dark));border-radius:var(--r);padding:20px 18px;color:var(--secondary)}
 .melasma-header{text-align:center;margin-bottom:18px}
@@ -194,6 +196,7 @@ body{min-height:100%;background:var(--bg);font-family:var(--font-b);color:var(--
 .mel-tl-text{font-size:12px;color:rgba(242,234,226,.7);line-height:1.5}
 .mel-tl-text strong{color:var(--secondary)}
 
+
 /* ===== SCREEN 4: QUESTIONNAIRE (post-scan) ===== */
 .s4-quiz{padding:24px;padding-top:20px;background:var(--white);min-height:100%}
 .s4-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
@@ -212,6 +215,7 @@ body{min-height:100%;background:var(--bg);font-family:var(--font-b);color:var(--
 .s4-opt.multi-sel{background:var(--primary);color:var(--white);border-color:var(--primary)}
 .s4-multi-hint{font-size:11px;color:var(--text-light);margin-bottom:12px}
 .s4-next-btn{margin-top:12px}
+
 
 /* ===== SCREEN 5: DIAGNOSIS + ROUTINE ===== */
 .s5-diag{background:var(--bg);padding-bottom:40px;min-height:100%}
@@ -238,6 +242,7 @@ body{min-height:100%;background:var(--bg);font-family:var(--font-b);color:var(--
 .pc-why{font-size:11px;color:var(--text-mid);line-height:1.4;margin-bottom:6px}
 .pc-bot{display:flex;justify-content:space-between;align-items:center}
 .pc-price{font-weight:700;font-size:14px;color:var(--primary)}
+
 
 /* Tips */
 .tip{margin:0 16px 10px;background:var(--white);border-radius:var(--r);padding:14px 16px;border-left:3px solid var(--accent);box-shadow:0 2px 8px rgba(0,0,0,.04)}
@@ -618,7 +623,7 @@ function renderReport(data) {
 
     <!-- Concern Cards -->
     <div class="stitle">Detected Concerns</div>
-    ${concernCards}
+    <div class="concern-grid">${concernCards}</div>
 
     <div class="divider"></div>
 
@@ -630,6 +635,7 @@ function renderReport(data) {
         <div class="melasma-title">Melasma Classification</div>
       </div>
 
+      <div class="mel-card-row">
       <div class="mel-card">
         <div class="mel-card-title">Histological Type</div>
         <div class="mel-type-badge">${md.classification.type}</div>
@@ -656,6 +662,7 @@ function renderReport(data) {
         <div class="gauge-labels"><span>Mild</span><span>Moderate</span><span>Severe</span></div>
         <div class="mel-sev-badge">${md.severity.level}</div>
         <div class="mel-area">Area Involvement: <strong>${md.severity.area_involvement}%</strong></div>
+      </div>
       </div>
 
       <div class="mel-card">
@@ -764,7 +771,7 @@ function renderDiagnosis() {
 
     <div style="height:16px"></div>
     <div class="rlabel">\u2600\uFE0F Morning Routine</div>
-    ${productCards(amProducts)}
+    <div class="product-grid">${productCards(amProducts)}</div>
 
     <div class="btn" style="margin-top:16px">Shop My Routine</div>
     <div style="text-align:center;font-size:11px;color:var(--text-light);margin:6px 0 12px">4 products \u2022 \u20B95,600 total</div>
