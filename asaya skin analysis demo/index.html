@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Asaya — AI Skin Analysis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --primary:#623B2A;
+  --primary-light:#8B5E4B;
+  --primary-dark:#3E2318;
+  --secondary:#F2EAE2;
+  --secondary-dark:#E5D5C8;
+  --accent:#C9A96E;
+  --accent-light:#E0CFA0;
+  --white:#FFFFFF;
+  --bg:#FAF7F4;
+  --text:#1A1A1A;
+  --text-mid:#5A5A5A;
+  --text-light:#8A8A8A;
+  --coral:#D4564E;
+  --coral-bg:#FDEAE7;
+  --amber:#D4924E;
+  --amber-bg:#FFF3E0;
+  --green:#4A9A7D;
+  --green-bg:#E0F5ED;
+  --r:20px;
+  --rs:12px;
+  --rp:50px;
+  --font-d:'Playfair Display',Georgia,serif;
+  --font-b:'DM Sans','Helvetica Neue',Arial,sans-serif;
+}
+html{height:100%;-webkit-text-size-adjust:100%}
+body{min-height:100%;background:var(--bg);font-family:var(--font-b);color:var(--text);line-height:1.5;-webkit-font-smoothing:antialiased}
+
+/* Container */
+.app{max-width:480px;margin:0 auto;position:relative;overflow:hidden;min-height:100vh;background:var(--white)}
+@media(min-width:768px){
+  body{background:#E8E0D8;display:flex;align-items:center;justify-content:center;padding:24px 0}
+  .app{min-height:90vh;max-height:900px;border-radius:32px;box-shadow:0 20px 80px rgba(98,59,42,.15)}
+}
+
+/* Screens */
+.screens{position:relative;width:100%;min-height:100vh}
+@media(min-width:768px){.screens{min-height:90vh;max-height:900px}}
+.screen{position:absolute;top:0;left:0;width:100%;height:100%;transition:transform .45s cubic-bezier(.4,0,.2,1),opacity .45s;opacity:0;transform:translateX(100%);overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+.screen.active{opacity:1;transform:translateX(0)}
+.screen.exit-left{opacity:0;transform:translateX(-30%)}
+
+/* Shared */
+.btn{display:block;width:calc(100% - 48px);margin:0 auto;padding:16px;background:var(--primary);color:var(--white);border:none;border-radius:var(--rp);text-align:center;font-family:var(--font-b);font-size:15px;font-weight:600;letter-spacing:.03em;cursor:pointer;transition:all .2s}
+.btn:hover{background:var(--primary-dark);transform:translateY(-1px);box-shadow:0 4px 16px rgba(98,59,42,.25)}
+.btn:active{transform:scale(.98)}
+.btn-sm{display:inline-block;padding:10px 20px;font-size:12px;width:auto;margin:0;border-radius:var(--rp)}
+.btn-accent{background:var(--accent);color:var(--primary-dark)}
+.btn-accent:hover{background:var(--accent-light)}
+
+/* ===== SCREEN 1: LANDING ===== */
+.s1{background:var(--secondary);min-height:100%}
+.s1-nav{display:flex;justify-content:space-between;align-items:center;padding:20px 24px}
+.s1-logo{font-family:var(--font-d);font-size:24px;font-weight:700;color:var(--primary);letter-spacing:.02em}
+.s1-nav-links{display:flex;gap:16px;font-size:12px;font-weight:600;color:var(--primary-light);text-transform:uppercase;letter-spacing:.08em}
+.s1-hero{padding:48px 28px 40px;text-align:center;position:relative;overflow:hidden}
+.s1-hero::before{content:'';position:absolute;top:-60px;right:-40px;width:200px;height:200px;background:radial-gradient(circle,rgba(201,169,110,.15),transparent 70%);border-radius:50%}
+.s1-hero::after{content:'';position:absolute;bottom:40px;left:-30px;width:120px;height:120px;background:radial-gradient(circle,rgba(98,59,42,.08),transparent 70%);border-radius:50%}
+.s1-eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.15em;color:var(--accent);font-weight:600;margin-bottom:12px;position:relative;z-index:1}
+.s1-title{font-family:var(--font-d);font-size:38px;line-height:1.15;color:var(--primary);position:relative;z-index:1}
+.s1-title em{font-style:italic;color:var(--accent)}
+.s1-sub{font-size:15px;color:var(--text-mid);margin:16px 0 32px;position:relative;z-index:1;max-width:320px;margin-left:auto;margin-right:auto}
+.s1-detect{margin:0 auto 28px;max-width:300px;position:relative;z-index:1}
+.s1-detect-title{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--text-light);font-weight:600;margin-bottom:10px}
+.s1-detect-tags{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.s1-detect-tag{padding:6px 14px;background:var(--white);border-radius:var(--rp);font-size:12px;font-weight:500;color:var(--primary);border:1px solid var(--secondary-dark)}
+.s1-face{width:130px;height:160px;margin:28px auto 0;background:linear-gradient(145deg,var(--primary-light),var(--primary));border-radius:65px 65px 52px 52px;display:flex;align-items:center;justify-content:center;position:relative;z-index:1;box-shadow:0 8px 32px rgba(98,59,42,.2)}
+.s1-face svg{opacity:.6}
+.s1-strip{background:var(--primary);color:var(--secondary);font-size:11px;font-weight:500;letter-spacing:.08em;padding:10px 0;overflow:hidden;white-space:nowrap;margin-top:32px}
+.s1-strip span{display:inline-block;animation:marquee 20s linear infinite}
+@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* ===== SCREEN 2: PLACEHOLDER (SDK handles camera + analyzing) ===== */
+.s2-sdk{background:#111;min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 24px;color:var(--secondary)}
+.s2-sdk-title{font-family:var(--font-d);font-size:20px;color:var(--accent);margin-bottom:8px}
+.s2-sdk-sub{font-size:13px;color:rgba(242,234,226,.4);margin-bottom:24px}
+.s2-sdk-box{width:200px;height:250px;border:2px dashed var(--accent);border-radius:100px 100px 80px 80px;display:flex;align-items:center;justify-content:center;margin-bottom:24px;opacity:.4}
+.s2-sdk-box-text{font-size:13px;color:var(--secondary);text-align:center;line-height:1.5}
+.s2-sdk-skip{font-size:12px;color:rgba(242,234,226,.4);cursor:pointer;text-decoration:underline}
+
+/* ===== SCREEN 3: AI RESULT (REPORT) ===== */
+.s3-report{background:var(--bg);padding-bottom:40px;min-height:100%}
+.s3-hdr{background:linear-gradient(145deg,var(--primary),var(--primary-dark));padding:40px 24px 24px;border-radius:0 0 var(--r) var(--r);text-align:center;position:relative;overflow:hidden}
+.s3-hdr::before{content:'';position:absolute;top:-20px;right:-20px;width:120px;height:120px;background:radial-gradient(circle,rgba(201,169,110,.15),transparent);border-radius:50%}
+.s3-htitle{font-family:var(--font-d);font-size:28px;color:var(--secondary);line-height:1.1;position:relative;z-index:1}
+.s3-hsub{font-size:12px;color:rgba(242,234,226,.5);margin-top:6px;position:relative;z-index:1}
+
+/* Overview card */
+.s3-ov{margin:-14px 16px 16px;background:var(--white);border-radius:var(--r);padding:24px 20px;box-shadow:0 4px 24px rgba(98,59,42,.08);text-align:center;position:relative;z-index:2}
+.score-ring{width:130px;height:130px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;position:relative}
+.score-ring svg{position:absolute;top:0;left:0;width:100%;height:100%;transform:rotate(-90deg)}
+.score-ring circle{fill:none;stroke-width:6;stroke-linecap:round}
+.score-ring .ring-bg{stroke:var(--secondary)}
+.score-ring .ring-fill{stroke:var(--accent);transition:stroke-dashoffset 1.5s ease}
+.score-num{font-family:var(--font-d);font-size:36px;color:var(--primary);line-height:1;position:relative;z-index:1}
+.score-label{font-size:10px;color:var(--accent);font-weight:600;text-transform:uppercase;letter-spacing:.05em;position:relative;z-index:1}
+.s3-badges{display:flex;gap:8px;justify-content:center;margin:14px 0;flex-wrap:wrap}
+.s3-badge{padding:6px 14px;border-radius:var(--rp);border:1px solid var(--secondary-dark);background:var(--white);font-size:12px;font-weight:600;color:var(--primary)}
+.s3-badge span{font-weight:400;color:var(--text-light);font-size:10px;display:block}
+.s3-summary{font-size:13px;color:var(--text-mid);line-height:1.6;margin-top:8px}
+.s3-summary strong{color:var(--primary)}
+
+/* Section titles */
+.stitle{font-family:var(--font-d);font-size:18px;color:var(--primary);padding:0 16px;margin:20px 0 12px}
+
+/* Face map */
+.facemap{margin:0 16px 16px;background:var(--white);border-radius:var(--r);padding:18px 14px 14px;box-shadow:0 2px 12px rgba(0,0,0,.04)}
+.fm-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--primary);text-align:center;margin-bottom:12px}
+.fm-wrap{position:relative;width:100%;aspect-ratio:3/4;border-radius:var(--rs);overflow:hidden;background:var(--secondary)}
+.fm-img{width:100%;height:100%;object-fit:cover}
+.hotspot{position:absolute;border-radius:50%;border:1.5px dashed;opacity:.5;pointer-events:none}
+.hotspot.red{border-color:var(--coral);background:rgba(212,86,78,.1)}
+.hotspot.orange{border-color:var(--amber);background:rgba(212,146,78,.1)}
+.hotspot.green{border-color:var(--green);background:rgba(74,154,125,.08)}
+.pin{position:absolute;display:flex;align-items:center;gap:0;z-index:3}
+.pin-tag{padding:4px 8px;border-radius:6px;font-size:9px;font-weight:700;letter-spacing:.02em;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.12);backdrop-filter:blur(4px)}
+.pin-tag.red{background:rgba(212,86,78,.92);color:#fff}
+.pin-tag.orange{background:rgba(212,146,78,.92);color:#fff}
+.pin-tag.green{background:rgba(74,154,125,.92);color:#fff}
+.pin-tag small{font-weight:400;opacity:.8;margin-left:4px}
+.pin-line{height:1.5px;width:16px;flex-shrink:0}
+.pin-line.red{background:var(--coral)}
+.pin-line.orange{background:var(--amber)}
+.pin-line.green{background:var(--green)}
+.pin-dot{width:8px;height:8px;border-radius:50%;border:1.5px solid #fff;flex-shrink:0;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.pin-dot.red{background:var(--coral)}
+.pin-dot.orange{background:var(--amber)}
+.pin-dot.green{background:var(--green)}
+.fm-legend{display:flex;gap:14px;justify-content:center;margin-top:10px}
+.leg{display:flex;align-items:center;gap:4px;font-size:9px;font-weight:600;color:var(--text-light)}
+.leg-d{width:7px;height:7px;border-radius:50%}
+
+/* Concern cards */
+.cc{margin:0 16px 10px;background:var(--white);border-radius:var(--r);padding:16px 18px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.cc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.cc-name{font-weight:700;font-size:15px;color:var(--text)}
+.sev{font-size:10px;font-weight:700;text-transform:uppercase;padding:4px 10px;border-radius:var(--rp);letter-spacing:.03em}
+.sev.att{background:var(--coral-bg);color:var(--coral)}
+.sev.avg{background:var(--amber-bg);color:var(--amber)}
+.sev.good{background:var(--green-bg);color:var(--green)}
+.cc-bar{height:5px;background:var(--secondary);border-radius:3px;margin:4px 0;overflow:hidden}
+.cc-fill{height:100%;border-radius:3px;transition:width 1s ease}
+.cc-fill.low{background:linear-gradient(90deg,var(--coral),var(--amber))}
+.cc-fill.mid{background:linear-gradient(90deg,var(--amber),var(--accent))}
+.cc-fill.hi{background:linear-gradient(90deg,var(--accent),var(--green))}
+.cc-score{font-size:11px;font-weight:600;color:var(--text-light)}
+.cc-insight{font-size:12px;color:var(--text-mid);line-height:1.6;margin-top:6px}
+
+/* ===== MELASMA DEEP DIVE ===== */
+.melasma{margin:0 16px 16px;background:linear-gradient(145deg,var(--primary),var(--primary-dark));border-radius:var(--r);padding:20px 18px;color:var(--secondary)}
+.melasma-header{text-align:center;margin-bottom:18px}
+.melasma-label{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--accent);font-weight:600}
+.melasma-title{font-family:var(--font-d);font-size:22px;color:var(--secondary);margin-top:4px}
+.mel-card{background:rgba(255,255,255,.08);border-radius:var(--rs);padding:16px;margin-bottom:12px}
+.mel-card-title{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);font-weight:600;margin-bottom:10px}
+.mel-type-badge{display:inline-block;padding:6px 16px;background:var(--accent);color:var(--primary-dark);border-radius:var(--rp);font-weight:700;font-size:14px;margin-bottom:10px}
+.mel-pct-row{display:flex;gap:8px;margin-top:8px}
+.mel-pct{flex:1;border-radius:8px;padding:10px;text-align:center}
+.mel-pct.epi{background:rgba(139,94,75,.3)}
+.mel-pct.der{background:rgba(120,140,160,.3)}
+.mel-pct-val{font-family:var(--font-d);font-size:22px;color:var(--white)}
+.mel-pct-label{font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:rgba(242,234,226,.6);margin-top:2px}
+.mel-confidence{font-size:11px;color:rgba(242,234,226,.5);margin-top:8px}
+.mel-gauge{text-align:center}
+.gauge-wrap{position:relative;width:180px;height:100px;margin:0 auto}
+.gauge-svg{width:100%;height:100%}
+.gauge-score{position:absolute;bottom:4px;left:50%;transform:translateX(-50%);text-align:center}
+.gauge-score-val{font-family:var(--font-d);font-size:28px;color:var(--white)}
+.gauge-score-max{font-size:10px;color:rgba(242,234,226,.4)}
+.gauge-labels{display:flex;justify-content:space-between;font-size:9px;color:rgba(242,234,226,.5);margin-top:4px;padding:0 8px}
+.mel-sev-badge{display:inline-block;padding:4px 12px;background:var(--amber);color:#fff;border-radius:var(--rp);font-size:11px;font-weight:700;margin-top:8px}
+.mel-area{font-size:12px;color:rgba(242,234,226,.6);margin-top:6px}
+.mel-area strong{color:var(--accent)}
+.mel-zone-item{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.mel-zone-item:last-child{border-bottom:none}
+.mel-zone-name{font-size:13px;font-weight:500;color:var(--secondary)}
+.mel-zone-bar-wrap{width:120px;display:flex;align-items:center;gap:8px}
+.mel-zone-bar{flex:1;height:4px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden}
+.mel-zone-fill{height:100%;border-radius:2px;background:var(--accent)}
+.mel-zone-pct{font-size:11px;font-weight:600;color:var(--accent);width:32px;text-align:right}
+.mel-tl-item{display:flex;gap:12px;margin-bottom:10px}
+.mel-tl-item:last-child{margin-bottom:0}
+.mel-tl-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:5px;flex-shrink:0}
+.mel-tl-text{font-size:12px;color:rgba(242,234,226,.7);line-height:1.5}
+.mel-tl-text strong{color:var(--secondary)}
+
+/* ===== SCREEN 4: QUESTIONNAIRE (post-scan) ===== */
+.s4-quiz{padding:24px;padding-top:20px;background:var(--white);min-height:100%}
+.s4-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.s4-back{font-size:13px;color:var(--text-mid);cursor:pointer;display:flex;align-items:center;gap:4px;background:none;border:none;font-family:var(--font-b)}
+.s4-step{font-size:11px;color:var(--accent);font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+.s4-progress{display:flex;gap:3px;margin-bottom:24px}
+.s4-bar{flex:1;height:3px;border-radius:2px;background:var(--secondary);transition:background .3s}
+.s4-bar.done{background:var(--primary)}
+.s4-bar.active{background:var(--accent)}
+.s4-section{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);font-weight:600;margin-bottom:6px}
+.s4-question{font-family:var(--font-d);font-size:22px;line-height:1.25;color:var(--primary);margin-bottom:6px}
+.s4-reason{font-size:12px;color:var(--text-light);margin-bottom:18px;font-style:italic}
+.s4-opt{display:block;width:100%;padding:14px 18px;margin-bottom:8px;border-radius:var(--rs);border:1.5px solid var(--secondary-dark);background:var(--white);font-size:14px;font-weight:500;text-align:left;cursor:pointer;transition:all .2s;font-family:var(--font-b);color:var(--text)}
+.s4-opt:hover{border-color:var(--primary-light);background:var(--secondary)}
+.s4-opt:active,.s4-opt.sel{background:var(--primary);color:var(--white);border-color:var(--primary);transform:scale(.98)}
+.s4-opt.multi-sel{background:var(--primary);color:var(--white);border-color:var(--primary)}
+.s4-multi-hint{font-size:11px;color:var(--text-light);margin-bottom:12px}
+.s4-next-btn{margin-top:12px}
+
+/* ===== SCREEN 5: DIAGNOSIS + ROUTINE ===== */
+.s5-diag{background:var(--bg);padding-bottom:40px;min-height:100%}
+.s5-diag-hdr{background:linear-gradient(145deg,var(--primary),var(--primary-dark));padding:36px 24px 20px;border-radius:0 0 var(--r) var(--r);text-align:center}
+.s5-diag-title{font-family:var(--font-d);font-size:24px;color:var(--secondary);line-height:1.15}
+.s5-diag-sub{font-size:12px;color:rgba(242,234,226,.5);margin-top:4px}
+
+/* Diagnosis card */
+.diag-card{margin:-10px 16px 16px;background:var(--white);border-radius:var(--r);padding:20px;box-shadow:0 4px 24px rgba(98,59,42,.08);position:relative;z-index:2}
+.diag-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--secondary)}
+.diag-row:last-child{border-bottom:none}
+.diag-label{font-size:13px;color:var(--text-mid)}
+.diag-val{font-weight:700;font-size:14px;color:var(--primary)}
+
+/* Routine */
+.routine-hdr{text-align:center;padding:4px 16px 2px}
+.routine-sub{text-align:center;font-size:12px;color:var(--text-light);padding:0 24px 12px}
+.rlabel{font-weight:700;font-size:13px;letter-spacing:.04em;padding:0 16px;margin:14px 0 8px;display:flex;align-items:center;gap:6px;color:var(--primary)}
+.pc{margin:0 16px 10px;background:var(--white);border-radius:var(--r);padding:14px;display:flex;gap:12px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.pc-img{width:60px;height:60px;border-radius:var(--rs);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:20px;background:var(--secondary)}
+.pc-info{flex:1}
+.pc-step{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);font-weight:700}
+.pc-name{font-weight:700;font-size:14px;margin:2px 0;color:var(--text)}
+.pc-why{font-size:11px;color:var(--text-mid);line-height:1.4;margin-bottom:6px}
+.pc-bot{display:flex;justify-content:space-between;align-items:center}
+.pc-price{font-weight:700;font-size:14px;color:var(--primary)}
+
+/* Tips */
+.tip{margin:0 16px 10px;background:var(--white);border-radius:var(--r);padding:14px 16px;border-left:3px solid var(--accent);box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.tip-t{font-size:12px;color:var(--text-mid);line-height:1.6}
+.tip-t strong{color:var(--primary)}
+
+/* Share */
+.share{text-align:center;padding:20px 16px 8px}
+.share-title{font-family:var(--font-d);font-size:16px;color:var(--primary)}
+.share-sub{font-size:12px;color:var(--text-light);margin-top:2px}
+.share-btns{display:flex;gap:10px;justify-content:center;margin-top:12px}
+.share-btn{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--secondary-dark);display:flex;align-items:center;justify-content:center;cursor:pointer;background:var(--white);font-size:14px;transition:all .2s}
+.share-btn:hover{border-color:var(--primary);background:var(--secondary)}
+.retake{margin-top:14px;font-size:12px;color:var(--primary);font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+
+/* Improvement cards */
+.improve-cards{display:flex;gap:8px;margin:0 16px 16px}
+.improve-card{flex:1;background:var(--white);border-radius:var(--rs);overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.improve-img{width:100%;aspect-ratio:3/4;background:var(--secondary);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text-light)}
+.improve-label{padding:8px;text-align:center;font-size:10px;font-weight:600;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}
+
+.divider{height:1px;background:var(--secondary-dark);margin:8px 16px}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="screens">
+
+    <!-- ===== SCREEN 1: LANDING ===== -->
+    <div class="screen active" id="s1">
+      <div class="s1">
+        <div class="s1-nav">
+          <div class="s1-logo">Asaya</div>
+          <div class="s1-nav-links"><span>Shop</span><span>About</span></div>
+        </div>
+        <div class="s1-strip"><span>CLINICALLY FORMULATED FOR MELANIN-RICH SKIN &nbsp;&bull;&nbsp; AI-POWERED SKIN ANALYSIS &nbsp;&bull;&nbsp; PERSONALIZED ROUTINES &nbsp;&bull;&nbsp; CLINICALLY FORMULATED FOR MELANIN-RICH SKIN &nbsp;&bull;&nbsp; AI-POWERED SKIN ANALYSIS &nbsp;&bull;&nbsp; PERSONALIZED ROUTINES &nbsp;&bull;&nbsp;</span></div>
+        <div class="s1-hero">
+          <div class="s1-eyebrow">AI Pigmentation Analyzer</div>
+          <div class="s1-title">Scan Your <em>Skin</em><br>to Detect</div>
+          <div class="s1-detect">
+            <div class="s1-detect-tags">
+              <div class="s1-detect-tag">Melasma</div>
+              <div class="s1-detect-tag">Hyperpigmentation</div>
+              <div class="s1-detect-tag">Uneven Tone</div>
+            </div>
+          </div>
+          <div class="btn" onclick="goTo('s2')" style="width:auto;display:inline-block;padding:16px 40px">Analyze My Skin</div>
+          <div class="s1-face">
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#F2EAE2" stroke-width="1.2"><circle cx="12" cy="8" r="5"/><path d="M3 21c0-4.97 4.03-9 9-9s9 4.03 9 9"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SCREEN 2: SDK PLACEHOLDER (Camera + Analyzing) ===== -->
+    <div class="screen" id="s2">
+      <div class="s2-sdk">
+        <div class="s2-sdk-title">GlamAR SDK</div>
+        <div class="s2-sdk-sub">Camera capture + face mesh analysis handled by SDK</div>
+        <div class="s2-sdk-box">
+          <div class="s2-sdk-box-text">Face scan<br>in progress...</div>
+        </div>
+        <div class="btn btn-accent" onclick="goTo('s3')" style="width:auto;display:inline-block;padding:14px 32px">Skip to Report (Demo)</div>
+        <div class="s2-sdk-skip" onclick="goTo('s3')" style="margin-top:12px">This screen is handled by your SDK</div>
+      </div>
+    </div>
+
+    <!-- ===== SCREEN 3: AI SKIN RESULT ===== -->
+    <div class="screen" id="s3">
+      <div class="s3-report" id="report-container"></div>
+    </div>
+
+    <!-- ===== SCREEN 4: QUESTIONNAIRE (post-scan) ===== -->
+    <div class="screen" id="s4">
+      <div class="s4-quiz" id="quiz-container"></div>
+    </div>
+
+    <!-- ===== SCREEN 5: DIAGNOSIS ===== -->
+    <div class="screen" id="s5">
+      <div class="s5-diag" id="diagnosis-container"></div>
+    </div>
+
+    <!-- ===== SCREEN 6: ROUTINE + PRODUCTS ===== -->
+    <div class="screen" id="s6">
+      <div class="s5-diag" id="routine-container"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ===== MOCK DATA (mirrors GlamAR API response) =====
+// TODO: Replace with real API call
+const mockApiResponse = {
+  retouchAnalysis: [
+    { stage: "initial", title: "Now", description: "Current skin state", image_url: "" },
+    { stage: "mid_term", title: "3 Months", description: "Projected improvement", image_url: "" },
+    { stage: "final", title: "6 Months", description: "Goal state", image_url: "" }
+  ],
+  skinData: {
+    total_skin_score: 72,
+    skin_age: 28,
+    eye_age: 27,
+    skin_type: "Combination",
+    skin_tone: "Medium",
+    skin_shade: "A67B5B",
+    skin_health: "Average",
+    summary: "Your melanin-rich skin has great natural resilience, but shows signs of uneven pigmentation and mild melasma that can be improved with targeted care.",
+    concerns: [
+      { name: "Hyperpigmentation", tech_name: "pigmentation", value: 38, severity: "Needs Attention",
+        description: "Noticeable uneven pigmentation on cheeks and forehead. Targeted brightening actives and consistent SPF are key.",
+        image: "" },
+      { name: "Melasma", tech_name: "melasma", value: 42, severity: "Needs Attention",
+        description: "Bilateral patches detected on malar region consistent with melasma pattern. Classification and severity detailed below.",
+        image: "" },
+      { name: "Post Acne Marks", tech_name: "scars", value: 56, severity: "Average",
+        description: "Faint post-inflammatory hyperpigmentation. Common in melanin-rich skin \u2014 responds well to niacinamide and azelaic acid.",
+        image: "" },
+      { name: "Acne", tech_name: "acne", value: 65, severity: "Average",
+        description: "Mild acne activity, mainly in the T-zone. A gentle salicylic acid cleanser can help manage breakouts.",
+        image: "" },
+      { name: "Pores", tech_name: "pores", value: 78, severity: "Average",
+        description: "Pores slightly visible around the nose but overall well-maintained.",
+        image: "" }
+    ]
+  }
+};
+
+// TODO: Replace with real melasma ML API
+const melasmaData = {
+  classification: { type: "Mixed", confidence: 0.78, epidermal_pct: 45, dermal_pct: 55 },
+  severity: { masi_score: 16.5, level: "Moderate", area_involvement: 38 },
+  affected_zones: [
+    { name: "Forehead", involvement: 25 },
+    { name: "Malar (Cheeks)", involvement: 55 },
+    { name: "Upper Lip", involvement: 15 }
+  ],
+  treatment_timeline: { type_response: "6\u201312 months", early_improvement: "8\u201312 weeks" }
+};
+
+// ===== QUESTIONNAIRE (10 questions from PDF spec) =====
+const quizData = [
+  { section: "Hormonal Factors",
+    q: "Are you currently pregnant or recently postpartum (last 12 months)?",
+    reason: "Pregnancy hormones commonly trigger melasma.",
+    opts: ["Yes", "No"] },
+  { section: "Hormonal Factors",
+    q: "Have you been diagnosed with PCOS or hormonal imbalance?",
+    reason: "Hormonal fluctuations increase melanin production.",
+    opts: ["Yes", "No", "Not sure"] },
+  { section: "Hormonal Factors",
+    q: "Do you take hormonal medications such as birth control pills?",
+    reason: "Estrogen/progesterone can trigger pigmentation.",
+    opts: ["Yes", "No"] },
+  { section: "Sun & Heat Exposure",
+    q: "How often is your skin exposed to direct sunlight?",
+    reason: "UV exposure is the biggest melasma trigger.",
+    opts: ["Less than 30 min daily", "30\u201360 min daily", "1\u20132 hours daily", "More than 2 hours daily"] },
+  { section: "Sun & Heat Exposure",
+    q: "Do you use sunscreen daily?",
+    reason: "UV protection determines pigmentation worsening.",
+    opts: ["Yes, every day", "Only when going outside", "Rarely", "Never"] },
+  { section: "Sun & Heat Exposure",
+    q: "Are you frequently exposed to heat? (cooking, outdoor work, workouts)",
+    reason: "Heat can stimulate melanocytes and worsen melasma.",
+    opts: ["Yes", "Sometimes", "Rarely"] },
+  { section: "Acne & Inflammation",
+    q: "How often do you get acne or pimples?",
+    reason: "Acne can lead to post-inflammatory hyperpigmentation.",
+    opts: ["Frequently", "Occasionally", "Rarely", "Never"] },
+  { section: "Acne & Inflammation",
+    q: "Do your dark marks usually appear after pimples heal?",
+    reason: "Helps differentiate acne marks vs melasma.",
+    opts: ["Yes", "No", "Sometimes"] },
+  { section: "Skin Sensitivity",
+    q: "Does your skin react easily to skincare products?",
+    reason: "Sensitive skin needs gentler actives.",
+    opts: ["Yes, frequently", "Sometimes", "Rarely"] },
+  { section: "Your Routine",
+    q: "Which of these products do you currently use?",
+    reason: "Helps determine treatment starting point.",
+    opts: ["Cleanser", "Serum", "Moisturizer", "Sunscreen", "None"],
+    multi: true },
+  { section: "Lifestyle",
+    q: "How would you describe your stress levels?",
+    reason: "Stress can trigger hormonal pigmentation.",
+    opts: ["Low", "Moderate", "High"] },
+  { section: "Hydration",
+    q: "How much water do you drink daily?",
+    reason: "Hydration impacts skin barrier health.",
+    opts: ["Less than 1L", "1\u20132L", "More than 2L"] },
+  { section: "Pigmentation Timeline",
+    q: "When did you first notice your pigmentation?",
+    reason: "Long-standing pigmentation behaves differently.",
+    opts: ["Less than 3 months ago", "3\u20136 months ago", "6\u201312 months ago", "More than 1 year ago"] },
+  { section: "Previous Treatments",
+    q: "Have you used treatments for pigmentation before?",
+    reason: "Understanding treatment history informs recommendations.",
+    opts: ["Dermatologist treatment", "Skincare products", "Home remedies", "No treatment"] }
+];
+
+// Use 10 max as PDF says (pick the essential ones)
+const activeQuiz = [0, 1, 3, 4, 5, 6, 7, 8, 9, 12];
+const quizQuestions = activeQuiz.map(i => quizData[i]);
+
+let currentQ = 0;
+const quizAnswers = [];
+const multiSelections = new Set();
+
+function renderQuiz() {
+  const c = document.getElementById('quiz-container');
+  const d = quizQuestions[currentQ];
+  const total = quizQuestions.length;
+
+  let bars = '<div class="s4-progress">';
+  for (let i = 0; i < total; i++) {
+    bars += `<div class="s4-bar ${i < currentQ ? 'done' : i === currentQ ? 'active' : ''}"></div>`;
+  }
+  bars += '</div>';
+
+  let opts = '';
+  if (d.multi) {
+    opts += '<div class="s4-multi-hint">Select all that apply</div>';
+    d.opts.forEach((o, idx) => {
+      opts += `<div class="s4-opt" onclick="toggleMulti(this, ${idx})">${o}</div>`;
+    });
+    opts += `<div class="btn s4-next-btn" onclick="submitMulti()">Continue</div>`;
+  } else {
+    d.opts.forEach((o, idx) => {
+      opts += `<div class="s4-opt" onclick="selectQuizOpt(this, ${idx})">${o}</div>`;
+    });
+  }
+
+  c.innerHTML = `
+    <div class="s4-top">
+      <button class="s4-back" onclick="${currentQ > 0 ? 'prevQuizQ()' : "goTo('s3')"}">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Back
+      </button>
+      <div class="s4-step">${currentQ + 1} of ${total}</div>
+    </div>
+    ${bars}
+    <div class="s4-section">${d.section}</div>
+    <div class="s4-question">${d.q}</div>
+    <div class="s4-reason">${d.reason}</div>
+    ${opts}
+  `;
+}
+
+function selectQuizOpt(el, idx) {
+  document.querySelectorAll('#quiz-container .s4-opt').forEach(o => o.classList.remove('sel'));
+  el.classList.add('sel');
+  quizAnswers[currentQ] = idx;
+  setTimeout(() => {
+    if (currentQ < quizQuestions.length - 1) { currentQ++; renderQuiz(); }
+    else { renderDiagnosis(); goTo('s5'); }
+  }, 300);
+}
+
+function toggleMulti(el, idx) {
+  if (multiSelections.has(idx)) { multiSelections.delete(idx); el.classList.remove('multi-sel'); }
+  else { multiSelections.add(idx); el.classList.add('multi-sel'); }
+}
+
+function submitMulti() {
+  quizAnswers[currentQ] = [...multiSelections];
+  multiSelections.clear();
+  if (currentQ < quizQuestions.length - 1) { currentQ++; renderQuiz(); }
+  else { renderDiagnosis(); goTo('s5'); }
+}
+
+function prevQuizQ() { if (currentQ > 0) { currentQ--; renderQuiz(); } }
+
+// ===== SCREEN NAVIGATION =====
+let currentScreen = 's1';
+
+function goTo(id) {
+  if (id === currentScreen) return;
+  const cur = document.getElementById(currentScreen);
+  const next = document.getElementById(id);
+  cur.classList.remove('active');
+  cur.classList.add('exit-left');
+  next.classList.add('active');
+  next.scrollTop = 0;
+  setTimeout(() => cur.classList.remove('exit-left'), 500);
+  currentScreen = id;
+
+  if (id === 's3' && !document.getElementById('report-container').innerHTML) {
+    renderReport(mockApiResponse);
+  }
+  if (id === 's4') { currentQ = 0; renderQuiz(); }
+}
+
+// ===== REPORT RENDERER (Screen 3) =====
+function renderReport(data) {
+  const sd = data.skinData;
+  const score = sd.total_skin_score;
+  const circumference = 2 * Math.PI * 58;
+  const offset = circumference - (score / 100) * circumference;
+
+  const sortedConcerns = [...sd.concerns].sort((a, b) => a.value - b.value);
+
+  function sevClass(sev) { return sev === 'Needs Attention' ? 'att' : sev === 'Good' ? 'good' : 'avg'; }
+  function fillClass(val) { return val < 50 ? 'low' : val < 80 ? 'mid' : 'hi'; }
+  function pinColor(sev) { return sev === 'Needs Attention' ? 'red' : sev === 'Good' ? 'green' : 'orange'; }
+  const healthLabel = score >= 80 ? 'Great Skin!' : score >= 60 ? 'Looking Good' : 'Room to Grow';
+
+  let concernCards = '';
+  sortedConcerns.forEach(c => {
+    concernCards += `
+      <div class="cc">
+        <div class="cc-top"><div class="cc-name">${c.name}</div><div class="sev ${sevClass(c.severity)}">${c.severity}</div></div>
+        <div class="cc-bar"><div class="cc-fill ${fillClass(c.value)}" style="width:${c.value}%"></div></div>
+        <div class="cc-score">${c.value} / 100</div>
+        <div class="cc-insight">${c.description}</div>
+      </div>`;
+  });
+
+  const pinPositions = [
+    { concern: sortedConcerns[0], top: '22%', left: '2%', side: 'left' },
+    { concern: sortedConcerns[1], top: '44%', left: '2%', side: 'left' },
+    { concern: sortedConcerns[2], top: '68%', left: '2%', side: 'left' },
+    { concern: sortedConcerns[3], top: '18%', right: '2%', side: 'right' },
+    { concern: sortedConcerns[4], top: '55%', right: '2%', side: 'right' }
+  ];
+  let pins = '';
+  pinPositions.forEach(p => {
+    if (!p.concern) return;
+    const col = pinColor(p.concern.severity);
+    const style = p.side === 'left' ? `top:${p.top};left:${p.left}` : `top:${p.top};right:${p.right};flex-direction:row-reverse`;
+    pins += `<div class="pin" style="${style}"><div class="pin-tag ${col}">${p.concern.name} <small>${p.concern.value}</small></div><div class="pin-line ${col}"></div><div class="pin-dot ${col}"></div></div>`;
+  });
+
+  // Melasma section
+  const md = melasmaData;
+  const masiAngle = (md.severity.masi_score / 48) * 180;
+
+  document.getElementById('report-container').innerHTML = `
+    <div class="s3-hdr">
+      <div style="height:16px"></div>
+      <div class="s3-htitle">Your Skin<br>Analysis</div>
+      <div class="s3-hsub">AI-powered results</div>
+    </div>
+
+    <div class="s3-ov">
+      <div class="score-ring">
+        <svg viewBox="0 0 130 130"><circle class="ring-bg" cx="65" cy="65" r="58"/><circle class="ring-fill" cx="65" cy="65" r="58" stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"/></svg>
+        <div style="display:flex;flex-direction:column;align-items:center">
+          <div class="score-num">${score}</div>
+          <div class="score-label">${healthLabel}</div>
+        </div>
+      </div>
+      <div class="s3-badges">
+        <div class="s3-badge"><span>Skin Age</span>${sd.skin_age}</div>
+        <div class="s3-badge"><span>Type</span>${sd.skin_type}</div>
+        <div class="s3-badge"><span>Tone</span>${sd.skin_tone}</div>
+      </div>
+      <div class="s3-summary">${sd.summary}</div>
+    </div>
+
+    <!-- Face Map -->
+    <div class="facemap">
+      <div class="fm-title">Detected Issues</div>
+      <div class="fm-wrap">
+        <img class="fm-img" src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=360&h=480&fit=crop&crop=face&auto=format&q=80" alt="Face analysis">
+        <div class="hotspot red" style="top:18%;left:10%;width:26%;height:16%"></div>
+        <div class="hotspot red" style="top:18%;right:10%;width:26%;height:16%"></div>
+        <div class="hotspot orange" style="top:52%;left:28%;width:44%;height:14%;border-radius:40%"></div>
+        ${pins}
+      </div>
+      <div class="fm-legend">
+        <div class="leg"><div class="leg-d" style="background:var(--coral)"></div>Needs Attention</div>
+        <div class="leg"><div class="leg-d" style="background:var(--amber)"></div>Average</div>
+        <div class="leg"><div class="leg-d" style="background:var(--green)"></div>Good</div>
+      </div>
+    </div>
+
+    <!-- Concern Cards -->
+    <div class="stitle">Detected Concerns</div>
+    ${concernCards}
+
+    <div class="divider"></div>
+
+    <!-- Melasma Deep Dive -->
+    <div class="stitle">Melasma Deep Dive</div>
+    <div class="melasma">
+      <div class="melasma-header">
+        <div class="melasma-label">Advanced Analysis</div>
+        <div class="melasma-title">Melasma Classification</div>
+      </div>
+
+      <div class="mel-card">
+        <div class="mel-card-title">Histological Type</div>
+        <div class="mel-type-badge">${md.classification.type}</div>
+        <div class="mel-pct-row">
+          <div class="mel-pct epi"><div class="mel-pct-val">${md.classification.epidermal_pct}%</div><div class="mel-pct-label">Epidermal</div></div>
+          <div class="mel-pct der"><div class="mel-pct-val">${md.classification.dermal_pct}%</div><div class="mel-pct-label">Dermal</div></div>
+        </div>
+        <div class="mel-confidence">AI Confidence: ${Math.round(md.classification.confidence * 100)}%</div>
+      </div>
+
+      <div class="mel-card mel-gauge">
+        <div class="mel-card-title">MASI Severity Index</div>
+        <div class="gauge-wrap">
+          <svg class="gauge-svg" viewBox="0 0 180 100">
+            <path d="M 10 90 A 80 80 0 0 1 170 90" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="8" stroke-linecap="round"/>
+            <path d="M 10 90 A 80 80 0 0 1 50 20" fill="none" stroke="var(--green)" stroke-width="8" stroke-linecap="round" opacity="0.6"/>
+            <path d="M 50 20 A 80 80 0 0 1 130 20" fill="none" stroke="var(--amber)" stroke-width="8" stroke-linecap="round" opacity="0.6"/>
+            <path d="M 130 20 A 80 80 0 0 1 170 90" fill="none" stroke="var(--coral)" stroke-width="8" stroke-linecap="round" opacity="0.6"/>
+            <line x1="90" y1="90" x2="${90 + 65 * Math.cos(Math.PI - (masiAngle * Math.PI / 180))}" y2="${90 - 65 * Math.sin(Math.PI - (masiAngle * Math.PI / 180))}" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="90" cy="90" r="4" fill="var(--accent)"/>
+          </svg>
+          <div class="gauge-score"><div class="gauge-score-val">${md.severity.masi_score}</div><div class="gauge-score-max">/ 48</div></div>
+        </div>
+        <div class="gauge-labels"><span>Mild</span><span>Moderate</span><span>Severe</span></div>
+        <div class="mel-sev-badge">${md.severity.level}</div>
+        <div class="mel-area">Area Involvement: <strong>${md.severity.area_involvement}%</strong></div>
+      </div>
+
+      <div class="mel-card">
+        <div class="mel-card-title">Affected Zones</div>
+        ${md.affected_zones.map(z => `
+          <div class="mel-zone-item">
+            <div class="mel-zone-name">${z.name}</div>
+            <div class="mel-zone-bar-wrap"><div class="mel-zone-bar"><div class="mel-zone-fill" style="width:${z.involvement}%"></div></div><div class="mel-zone-pct">${z.involvement}%</div></div>
+          </div>`).join('')}
+      </div>
+
+      <div class="mel-card">
+        <div class="mel-card-title">Expected Timeline</div>
+        <div class="mel-tl-item"><div class="mel-tl-dot"></div><div class="mel-tl-text"><strong>Early improvement:</strong> ${md.treatment_timeline.early_improvement} with consistent use</div></div>
+        <div class="mel-tl-item"><div class="mel-tl-dot"></div><div class="mel-tl-text"><strong>Full response:</strong> ${md.treatment_timeline.type_response} for ${md.classification.type.toLowerCase()} type</div></div>
+        <div class="mel-tl-item"><div class="mel-tl-dot"></div><div class="mel-tl-text"><strong>Maintenance:</strong> Ongoing SPF + brightening routine to prevent recurrence</div></div>
+      </div>
+    </div>
+
+    <!-- CTA to questionnaire -->
+    <div style="padding:8px 0 16px">
+      <div class="btn" onclick="goTo('s4')">Continue to Personalize</div>
+      <div style="text-align:center;font-size:11px;color:var(--text-light);margin-top:6px">Answer a few questions for your custom routine</div>
+    </div>
+    <div style="height:20px"></div>
+  `;
+}
+
+// ===== DIAGNOSIS + ROUTINE (Screen 5) =====
+function renderDiagnosis() {
+  // Smart logic from questionnaire answers
+  const isPregnant = quizAnswers[0] === 0;
+  const hasPCOS = quizAnswers[1] === 0;
+  const highSun = quizAnswers[2] >= 2;
+  const lowSPF = quizAnswers[3] >= 2;
+  const highHeat = quizAnswers[4] === 0;
+  const freqAcne = quizAnswers[5] === 0;
+  const postAcneMarks = quizAnswers[6] === 0;
+  const sensitive = quizAnswers[7] === 0;
+
+  // Determine primary concern and trigger
+  let primaryConcern = "Melasma";
+  let triggers = [];
+  if (isPregnant || hasPCOS) triggers.push("Hormonal");
+  if (highSun || lowSPF) triggers.push("UV Exposure");
+  if (highHeat) triggers.push("Heat Exposure");
+  if (freqAcne && postAcneMarks) { primaryConcern = "PIH + Melasma"; triggers.push("Post-Inflammatory"); }
+  if (triggers.length === 0) triggers.push("UV Exposure");
+
+  const amProducts = [
+    { step: "Cleanse", name: "Under One Sun Cleanser", why: "Gentle gel cleanser that preps melanin-rich skin without stripping moisture.", price: "\u20B91,250", emoji: "\u{1F9F4}" },
+    { step: "Spot Treatment", name: "Running Deep Serum", why: "Niacinamide + Vitamin C targeting the pigmentation and melasma we detected.", price: "\u20B91,450", emoji: "\u{1F4A7}" },
+    { step: "Moisturize", name: "Glow Ritual Moisturizer", why: "Lightweight ceramide cream for your combination skin.", price: "\u20B91,350", emoji: "\u2728" },
+    { step: "Sunscreen", name: "Under One Sun SPF 50", why: "Invisible finish SPF \u2014 critical for preventing melasma from worsening.", price: "\u20B91,550", emoji: "\u2600\uFE0F" }
+  ];
+
+  function productCards(products) {
+    return products.map((p, i) => `
+      <div class="pc">
+        <div class="pc-img">${p.emoji}</div>
+        <div class="pc-info">
+          <div class="pc-step">Step ${i + 1}: ${p.step}</div>
+          <div class="pc-name">${p.name}</div>
+          <div class="pc-why">${p.why}</div>
+          <div class="pc-bot"><div class="pc-price">${p.price}</div><div class="btn btn-sm btn-accent">Shop Now</div></div>
+        </div>
+      </div>`).join('');
+  }
+
+  // Screen 5: Diagnosis only
+  document.getElementById('diagnosis-container').innerHTML = `
+    <div class="s5-diag-hdr">
+      <div style="height:12px"></div>
+      <div class="s5-diag-title">Your Personalized<br>Diagnosis</div>
+      <div class="s5-diag-sub">Based on your scan + questionnaire</div>
+    </div>
+
+    <div class="diag-card">
+      <div class="diag-row"><div class="diag-label">Primary Concern</div><div class="diag-val">${primaryConcern}</div></div>
+      <div class="diag-row"><div class="diag-label">Trigger</div><div class="diag-val">${triggers.join(' + ')}</div></div>
+      <div class="diag-row"><div class="diag-label">Melasma Type</div><div class="diag-val">${melasmaData.classification.type}</div></div>
+      <div class="diag-row"><div class="diag-label">Severity</div><div class="diag-val">${melasmaData.severity.level} (MASI ${melasmaData.severity.masi_score})</div></div>
+      <div class="diag-row"><div class="diag-label">Skin Sensitivity</div><div class="diag-val">${sensitive ? 'High \u2014 gentle actives needed' : 'Normal'}</div></div>
+      <div class="diag-row"><div class="diag-label">Expected Timeline</div><div class="diag-val">${melasmaData.treatment_timeline.early_improvement}</div></div>
+    </div>
+
+    <!-- Tips -->
+    <div class="stitle">Tips For Your Skin</div>
+    <div class="tip"><div class="tip-t"><strong>SPF is non-negotiable for melasma.</strong> UV exposure triggers melanin overproduction. Apply Under One Sun SPF 50 as your last AM step \u2014 rain or shine.</div></div>
+    <div class="tip"><div class="tip-t"><strong>Be patient with pigmentation.</strong> Melanin-rich skin takes longer to show results from brightening actives. Consistency over 8\u201312 weeks is key.</div></div>
+    <div class="tip"><div class="tip-t"><strong>Avoid harsh exfoliants.</strong> Aggressive scrubs can trigger post-inflammatory hyperpigmentation. Stick to gentle chemical exfoliants like AHAs.</div></div>
+
+    <div style="padding:16px 0">
+      <div class="btn" onclick="goTo('s6')">See My Routine</div>
+    </div>
+    <div style="height:20px"></div>
+  `;
+
+  // Screen 6: Routine + Products
+  document.getElementById('routine-container').innerHTML = `
+    <div class="s5-diag-hdr">
+      <div style="height:12px"></div>
+      <div class="s5-diag-title">Your Asaya<br>Routine</div>
+      <div class="s5-diag-sub">Personalized for your ${mockApiResponse.skinData.skin_type.toLowerCase()} skin targeting ${primaryConcern.toLowerCase()}</div>
+    </div>
+
+    <div style="height:16px"></div>
+    <div class="rlabel">\u2600\uFE0F Morning Routine</div>
+    ${productCards(amProducts)}
+
+    <div class="btn" style="margin-top:16px">Shop My Routine</div>
+    <div style="text-align:center;font-size:11px;color:var(--text-light);margin:6px 0 12px">4 products \u2022 \u20B95,600 total</div>
+
+    <div class="divider"></div>
+
+    <div class="share">
+      <div class="share-title">Share Your Results</div>
+      <div class="share-sub">Show your skin story</div>
+      <div class="share-btns">
+        <div class="share-btn">\u{1F4E4}</div>
+        <div class="share-btn">\u{1F4CB}</div>
+        <div class="share-btn">\u{1F4AC}</div>
+      </div>
+      <div class="retake" onclick="goTo('s1')">Start Over</div>
+    </div>
+    <div style="height:30px"></div>
+  `;
+}
+
+// Init
+renderQuiz();
+</script>
+</body>
+</html>
