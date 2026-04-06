@@ -740,17 +740,6 @@ function renderReport(data) {
         <div class="melasma-title">Melasma Classification</div>
       </div>
 
-      <div class="mel-card-row">
-      <div class="mel-card">
-        <div class="mel-card-title">Histological Type</div>
-        <div class="mel-type-badge">${md.classification.type}</div>
-        <div class="mel-pct-row">
-          <div class="mel-pct epi"><div class="mel-pct-val">${md.classification.epidermal_pct}%</div><div class="mel-pct-label">Epidermal</div></div>
-          <div class="mel-pct der"><div class="mel-pct-val">${md.classification.dermal_pct}%</div><div class="mel-pct-label">Dermal</div></div>
-        </div>
-        <div class="mel-confidence">AI Confidence: ${Math.round(md.classification.confidence * 100)}%</div>
-      </div>
-
       <div class="mel-card mel-gauge">
         <div class="mel-card-title">MASI Severity Index</div>
         <div class="gauge-wrap">
