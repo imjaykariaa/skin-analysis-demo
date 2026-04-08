@@ -568,82 +568,117 @@ const melasmaData = {
   treatment_timeline: { type_response: "6\u201312 months", early_improvement: "8\u201312 weeks" }
 };
 
-// ===== QUESTIONNAIRE (10 questions from PDF spec) =====
-const quizData = [
-  { section: "Hormonal Factors",
+// ===== QUESTIONNAIRE =====
+// Gender question is always first, then questions are filtered based on answer
+const genderQuestion = {
+  section: "About You",
+  q: "What is your gender?",
+  reason: "Helps us tailor questions relevant to your skin health.",
+  opts: ["Female", "Male", "Other / Prefer not to say"]
+};
+
+const allQuestions = [
+  { id: "pregnant", section: "Hormonal Factors", femaleOnly: true,
     q: "Are you currently pregnant or recently postpartum (last 12 months)?",
     reason: "Pregnancy hormones commonly trigger melasma.",
     opts: ["Yes", "No"] },
-  { section: "Hormonal Factors",
+  { id: "pcos", section: "Hormonal Factors", femaleOnly: true,
     q: "Have you been diagnosed with PCOS or hormonal imbalance?",
     reason: "Hormonal fluctuations increase melanin production.",
     opts: ["Yes", "No", "Not sure"] },
-  { section: "Hormonal Factors",
-    q: "Do you take hormonal medications such as birth control pills?",
-    reason: "Estrogen/progesterone can trigger pigmentation.",
-    opts: ["Yes", "No"] },
-  { section: "Sun & Heat Exposure",
+  { id: "sun", section: "Sun & Heat Exposure",
     q: "How often is your skin exposed to direct sunlight?",
     reason: "UV exposure is the biggest melasma trigger.",
     opts: ["Less than 30 min daily", "30\u201360 min daily", "1\u20132 hours daily", "More than 2 hours daily"] },
-  { section: "Sun & Heat Exposure",
+  { id: "spf", section: "Sun & Heat Exposure",
     q: "Do you use sunscreen daily?",
     reason: "UV protection determines pigmentation worsening.",
     opts: ["Yes, every day", "Only when going outside", "Rarely", "Never"] },
-  { section: "Sun & Heat Exposure",
+  { id: "heat", section: "Sun & Heat Exposure",
     q: "Are you frequently exposed to heat? (cooking, outdoor work, workouts)",
     reason: "Heat can stimulate melanocytes and worsen melasma.",
     opts: ["Yes", "Sometimes", "Rarely"] },
-  { section: "Acne & Inflammation",
+  { id: "acne", section: "Acne & Inflammation",
     q: "How often do you get acne or pimples?",
     reason: "Acne can lead to post-inflammatory hyperpigmentation.",
     opts: ["Frequently", "Occasionally", "Rarely", "Never"] },
-  { section: "Acne & Inflammation",
+  { id: "postacne", section: "Acne & Inflammation",
     q: "Do your dark marks usually appear after pimples heal?",
     reason: "Helps differentiate acne marks vs melasma.",
     opts: ["Yes", "No", "Sometimes"] },
-  { section: "Skin Sensitivity",
+  { id: "sensitive", section: "Skin Sensitivity",
     q: "Does your skin react easily to skincare products?",
     reason: "Sensitive skin needs gentler actives.",
     opts: ["Yes, frequently", "Sometimes", "Rarely"] },
-  { section: "Your Routine",
+  { id: "routine", section: "Your Routine",
     q: "Which of these products do you currently use?",
     reason: "Helps determine treatment starting point.",
     opts: ["Cleanser", "Serum", "Moisturizer", "Sunscreen", "None"],
     multi: true },
-  { section: "Lifestyle",
-    q: "How would you describe your stress levels?",
-    reason: "Stress can trigger hormonal pigmentation.",
-    opts: ["Low", "Moderate", "High"] },
-  { section: "Hydration",
-    q: "How much water do you drink daily?",
-    reason: "Hydration impacts skin barrier health.",
-    opts: ["Less than 1L", "1\u20132L", "More than 2L"] },
-  { section: "Pigmentation Timeline",
+  { id: "timeline", section: "Pigmentation Timeline",
     q: "When did you first notice your pigmentation?",
     reason: "Long-standing pigmentation behaves differently.",
-    opts: ["Less than 3 months ago", "3\u20136 months ago", "6\u201312 months ago", "More than 1 year ago"] },
-  { section: "Previous Treatments",
-    q: "Have you used treatments for pigmentation before?",
-    reason: "Understanding treatment history informs recommendations.",
-    opts: ["Professional treatment", "Skincare products", "Home remedies", "No treatment"] }
+    opts: ["Less than 3 months ago", "3\u20136 months ago", "6\u201312 months ago", "More than 1 year ago"] }
 ];
 
-const activeQuiz = [0, 1, 3, 4, 5, 6, 7, 8, 9, 12];
-const quizQuestions = activeQuiz.map(i => quizData[i]);
+let selectedGender = null;
+let quizQuestions = [];
 
-let currentQ = 0;
-const quizAnswers = [];
+function buildQuizForGender(gender) {
+  selectedGender = gender;
+  const isMale = gender === 0; // "Male" is index 1... wait, opts: Female=0, Male=1
+  const isFemale = gender === 0;
+  // Female = 0, Male = 1, Other = 2
+  if (gender === 1) {
+    // Male: skip femaleOnly questions
+    quizQuestions = allQuestions.filter(q => !q.femaleOnly);
+  } else {
+    // Female or Other: show all questions
+    quizQuestions = [...allQuestions];
+  }
+}
+
+let currentQ = -1; // -1 = gender question, 0+ = filtered quiz questions
+const quizAnswers = {};
 const multiSelections = new Set();
 
 function renderQuiz() {
   const c = document.getElementById('quiz-container');
+
+  // Gender question (first screen)
+  if (currentQ === -1) {
+    const d = genderQuestion;
+    const total = selectedGender !== null ? quizQuestions.length + 1 : '?';
+    let opts = '';
+    d.opts.forEach((o, idx) => {
+      opts += `<div class="s4-opt" onclick="selectGender(this, ${idx})">${o}</div>`;
+    });
+    c.innerHTML = `
+      <div class="s4-top">
+        <button class="s4-back" onclick="goTo('s3')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Back
+        </button>
+        <div class="s4-step">1 of ${total}</div>
+      </div>
+      <div class="s4-progress"><div class="s4-bar active"></div></div>
+      <div class="s4-section">${d.section}</div>
+      <div class="s4-question">${d.q}</div>
+      <div class="s4-reason">${d.reason}</div>
+      ${opts}
+    `;
+    return;
+  }
+
+  // Regular questions
   const d = quizQuestions[currentQ];
-  const total = quizQuestions.length;
+  const total = quizQuestions.length + 1; // +1 for gender
+  const displayIdx = currentQ + 2; // gender is 1, so this starts at 2
 
   let bars = '<div class="s4-progress">';
   for (let i = 0; i < total; i++) {
-    bars += `<div class="s4-bar ${i < currentQ ? 'done' : i === currentQ ? 'active' : ''}"></div>`;
+    const qIdx = i - 1; // shift for gender at position 0
+    bars += `<div class="s4-bar ${i === 0 ? 'done' : qIdx < currentQ ? 'done' : qIdx === currentQ ? 'active' : ''}"></div>`;
   }
   bars += '</div>';
 
@@ -662,11 +697,11 @@ function renderQuiz() {
 
   c.innerHTML = `
     <div class="s4-top">
-      <button class="s4-back" onclick="${currentQ > 0 ? 'prevQuizQ()' : "goTo('s3')"}">
+      <button class="s4-back" onclick="prevQuizQ()">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
         Back
       </button>
-      <div class="s4-step">${currentQ + 1} of ${total}</div>
+      <div class="s4-step">${displayIdx} of ${total}</div>
     </div>
     ${bars}
     <div class="s4-section">${d.section}</div>
@@ -676,10 +711,17 @@ function renderQuiz() {
   `;
 }
 
+function selectGender(el, idx) {
+  document.querySelectorAll('#quiz-container .s4-opt').forEach(o => o.classList.remove('sel'));
+  el.classList.add('sel');
+  buildQuizForGender(idx);
+  setTimeout(() => { currentQ = 0; renderQuiz(); }, 300);
+}
+
 function selectQuizOpt(el, idx) {
   document.querySelectorAll('#quiz-container .s4-opt').forEach(o => o.classList.remove('sel'));
   el.classList.add('sel');
-  quizAnswers[currentQ] = idx;
+  quizAnswers[quizQuestions[currentQ].id] = idx;
   setTimeout(() => {
     if (currentQ < quizQuestions.length - 1) { currentQ++; renderQuiz(); }
     else { renderDiagnosis(); goTo('s5'); }
@@ -692,13 +734,16 @@ function toggleMulti(el, idx) {
 }
 
 function submitMulti() {
-  quizAnswers[currentQ] = [...multiSelections];
+  quizAnswers[quizQuestions[currentQ].id] = [...multiSelections];
   multiSelections.clear();
   if (currentQ < quizQuestions.length - 1) { currentQ++; renderQuiz(); }
   else { renderDiagnosis(); goTo('s5'); }
 }
 
-function prevQuizQ() { if (currentQ > 0) { currentQ--; renderQuiz(); } }
+function prevQuizQ() {
+  if (currentQ > 0) { currentQ--; renderQuiz(); }
+  else { currentQ = -1; renderQuiz(); } // go back to gender
+}
 
 // ===== SCREEN NAVIGATION =====
 let currentScreen = 's1';
@@ -717,7 +762,7 @@ function goTo(id) {
   if (id === 's3' && !document.getElementById('report-container').innerHTML) {
     renderReport(mockApiResponse);
   }
-  if (id === 's4') { currentQ = 0; renderQuiz(); }
+  if (id === 's4') { currentQ = -1; selectedGender = null; renderQuiz(); }
 }
 
 // ===== REPORT RENDERER (Screen 3) =====
@@ -863,14 +908,16 @@ function renderReport(data) {
 
 // ===== DIAGNOSIS + ROUTINE (Screen 5 + 6) =====
 function renderDiagnosis() {
-  const isPregnant = quizAnswers[0] === 0;
-  const hasPCOS = quizAnswers[1] === 0;
-  const highSun = quizAnswers[2] >= 2;
-  const lowSPF = quizAnswers[3] >= 2;
-  const highHeat = quizAnswers[4] === 0;
-  const freqAcne = quizAnswers[5] === 0;
-  const postAcneMarks = quizAnswers[6] === 0;
-  const sensitive = quizAnswers[7] === 0;
+  // ID-based answer lookup (works regardless of gender filtering)
+  const a = quizAnswers;
+  const isPregnant = a.pregnant === 0;
+  const hasPCOS = a.pcos === 0;
+  const highSun = (a.sun || 0) >= 2;
+  const lowSPF = (a.spf || 0) >= 2;
+  const highHeat = a.heat === 0;
+  const freqAcne = a.acne === 0;
+  const postAcneMarks = a.postacne === 0;
+  const sensitive = a.sensitive === 0;
 
   let primaryConcern = "Melasma";
   let triggers = [];
