@@ -127,13 +127,35 @@ body{min-height:100%;background:var(--bg);font-family:var(--font-b);color:var(--
 .s1-powered{text-align:center;padding:0 24px 24px;font-size:10px;color:var(--text-light);letter-spacing:.04em}
 .s1-powered strong{color:var(--primary-light);font-weight:600}
 
-/* ===== SCREEN 2: PLACEHOLDER (SDK handles camera + analyzing) ===== */
-.s2-sdk{background:#111;min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 24px;color:var(--secondary)}
-.s2-sdk-title{font-family:var(--font-d);font-size:20px;color:var(--accent);margin-bottom:8px}
-.s2-sdk-sub{font-size:13px;color:rgba(242,234,226,.4);margin-bottom:24px}
-.s2-sdk-box{width:200px;height:250px;border:2px dashed var(--accent);border-radius:100px 100px 80px 80px;display:flex;align-items:center;justify-content:center;margin-bottom:24px;opacity:.4}
-.s2-sdk-box-text{font-size:13px;color:var(--secondary);text-align:center;line-height:1.5}
-.s2-sdk-skip{font-size:12px;color:rgba(242,234,226,.4);cursor:pointer;text-decoration:underline}
+/* ===== SCREEN 2: INSTRUCTIONS ===== */
+.s2-inst{background:var(--primary-dark);min-height:100%;display:flex;flex-direction:column;padding:0}
+.s2-inst-top{padding:24px 24px 0;display:flex;align-items:center;justify-content:space-between}
+.s2-inst-back{background:none;border:none;color:rgba(242,234,226,.5);font-size:13px;font-family:var(--font-b);cursor:pointer;display:flex;align-items:center;gap:4px}
+.s2-inst-skip{font-size:12px;color:rgba(242,234,226,.4);cursor:pointer}
+.s2-inst-hero{text-align:center;padding:28px 24px 24px}
+.s2-inst-title{font-family:var(--font-d);font-size:24px;color:var(--secondary);line-height:1.2}
+.s2-inst-sub{font-size:13px;color:rgba(242,234,226,.45);margin-top:6px}
+.s2-inst-cards{padding:0 20px;display:flex;flex-direction:column;gap:12px;flex:1}
+.s2-inst-card{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:var(--r);padding:18px 20px;display:flex;gap:16px;align-items:flex-start}
+.s2-inst-icon{width:48px;height:48px;border-radius:14px;background:rgba(201,169,110,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.s2-inst-icon svg{width:24px;height:24px;stroke:var(--accent);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.s2-inst-card-text{flex:1}
+.s2-inst-card-title{font-size:15px;font-weight:700;color:var(--secondary);margin-bottom:3px}
+.s2-inst-card-desc{font-size:12px;color:rgba(242,234,226,.5);line-height:1.5}
+.s2-inst-footer{padding:20px 20px 32px;margin-top:auto}
+.s2-inst-consent{font-size:11px;color:rgba(242,234,226,.4);text-align:center;line-height:1.5;margin-bottom:14px;padding:0 8px}
+.s2-inst-consent a{color:var(--accent);text-decoration:underline}
+.s2-inst-btn{display:block;width:100%;padding:18px;background:var(--accent);color:var(--primary-dark);border:none;border-radius:var(--rp);text-align:center;font-family:var(--font-b);font-size:16px;font-weight:700;letter-spacing:.03em;cursor:pointer;transition:all .2s}
+.s2-inst-btn:hover{background:var(--accent-light);transform:translateY(-1px);box-shadow:0 6px 20px rgba(201,169,110,.3)}
+.s2-inst-btn:active{transform:scale(.98)}
+
+/* ===== SCREEN 2B: SDK PLACEHOLDER (Camera + Analyzing) ===== */
+.s2b-sdk{background:#111;min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 24px;color:var(--secondary)}
+.s2b-sdk-title{font-family:var(--font-d);font-size:20px;color:var(--accent);margin-bottom:8px}
+.s2b-sdk-sub{font-size:13px;color:rgba(242,234,226,.4);margin-bottom:24px}
+.s2b-sdk-box{width:200px;height:250px;border:2px dashed var(--accent);border-radius:100px 100px 80px 80px;display:flex;align-items:center;justify-content:center;margin-bottom:24px;opacity:.4}
+.s2b-sdk-box-text{font-size:13px;color:var(--secondary);text-align:center;line-height:1.5}
+.s2b-sdk-skip{font-size:12px;color:rgba(242,234,226,.4);cursor:pointer;text-decoration:underline}
 
 /* ===== SCREEN 3: AI RESULT (REPORT) ===== */
 .s3-report{background:var(--bg);padding-bottom:40px;min-height:100%}
@@ -407,16 +429,71 @@ body{min-height:100%;background:var(--bg);font-family:var(--font-b);color:var(--
       </div>
     </div>
 
-    <!-- ===== SCREEN 2: SDK PLACEHOLDER (Camera + Analyzing) ===== -->
+    <!-- ===== SCREEN 2: INSTRUCTIONS ===== -->
     <div class="screen" id="s2">
-      <div class="s2-sdk">
-        <div class="s2-sdk-title">GlamAR SDK</div>
-        <div class="s2-sdk-sub">Camera capture + face mesh analysis handled by SDK</div>
-        <div class="s2-sdk-box">
-          <div class="s2-sdk-box-text">Face scan<br>in progress...</div>
+      <div class="s2-inst">
+        <div class="s2-inst-top">
+          <button class="s2-inst-back" onclick="goTo('s1')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            Back
+          </button>
+          <div class="s2-inst-skip" onclick="goTo('s2b')">Skip</div>
+        </div>
+
+        <div class="s2-inst-hero">
+          <div class="s2-inst-title">How to Take Your<br>Picture for Best Results</div>
+          <div class="s2-inst-sub">Follow these tips for accurate analysis</div>
+        </div>
+
+        <div class="s2-inst-cards">
+          <div class="s2-inst-card">
+            <div class="s2-inst-icon">
+              <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z"/><circle cx="9" cy="10" r="1.5"/><circle cx="15" cy="10" r="1.5"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/></svg>
+            </div>
+            <div class="s2-inst-card-text">
+              <div class="s2-inst-card-title">Go natural</div>
+              <div class="s2-inst-card-desc">Remove make-up, take off your glasses, and pull your hair back &amp; tie it.</div>
+            </div>
+          </div>
+
+          <div class="s2-inst-card">
+            <div class="s2-inst-icon">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+            </div>
+            <div class="s2-inst-card-text">
+              <div class="s2-inst-card-title">Find good lighting</div>
+              <div class="s2-inst-card-desc">Use natural light or a well-lit space. Avoid harsh shadows on your face.</div>
+            </div>
+          </div>
+
+          <div class="s2-inst-card">
+            <div class="s2-inst-icon">
+              <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><circle cx="12" cy="12" r="4"/><circle cx="18" cy="7" r="1"/></svg>
+            </div>
+            <div class="s2-inst-card-text">
+              <div class="s2-inst-card-title">Align your face</div>
+              <div class="s2-inst-card-desc">Position your face inside the outline. Look straight at the camera.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="s2-inst-footer">
+          <div class="s2-inst-consent">By clicking "Proceed" below, I agree to Asaya's <a href="#">Terms &amp; Conditions</a>, and I expressly consent to the scanning of my image for skin analysis.</div>
+          <button class="s2-inst-btn" onclick="goTo('s2b')">Proceed to Camera</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SCREEN 2B: SDK PLACEHOLDER (Camera + Analyzing) ===== -->
+    <div class="screen" id="s2b">
+      <div class="s2b-sdk">
+        <div class="s2b-sdk-title">GlamAR SDK</div>
+        <div class="s2b-sdk-sub">Camera capture + face mesh analysis handled by SDK</div>
+        <div class="s2b-sdk-box">
+          <div class="s2b-sdk-box-text">Face scan<br>in progress...</div>
         </div>
         <div class="btn btn-accent" onclick="goTo('s3')" style="width:auto;display:inline-block;padding:14px 32px">Skip to Report (Demo)</div>
-        <div class="s2-sdk-skip" onclick="goTo('s3')" style="margin-top:12px">This screen is handled by your SDK</div>
+        <div class="s2b-sdk-skip" onclick="goTo('s3')" style="margin-top:12px">This screen is handled by your SDK</div>
       </div>
     </div>
 
